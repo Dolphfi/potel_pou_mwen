@@ -43,7 +43,7 @@ async createAccount({email, password, role}: CreateAccountInput): Promise<[boole
           error: 'Wrong password',
         };
       }
-      const token = jwt.sign({id: user.id}, this.config.get('SECRET_KEY'));
+      const token = this.jwtService.sing(user.id);
        return {
         ok: true,
         token,
@@ -52,5 +52,9 @@ async createAccount({email, password, role}: CreateAccountInput): Promise<[boole
     } catch (error) {
       return {ok: false, error};
     }
+  }
+
+  async findById(id:number):Promise<User>{
+    return this.users.findOne({where: {id}});
   }
 }
