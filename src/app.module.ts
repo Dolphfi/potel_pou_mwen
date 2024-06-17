@@ -10,6 +10,7 @@ import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
 import * as Joi from 'joi';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -43,13 +44,13 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      context: ({req}) => ({user: req['user']}),
     }), 
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),
     RestaurantsModule,
     UsersModule,
-    CommonModule,
     ],
   controllers: [],
   providers: [],
@@ -60,7 +61,7 @@ export class AppModule implements NestModule{
     .apply(JwtMiddleware)
     .forRoutes({
       path: '/graphql',
-      method: RequestMethod.ALL,
+      method: RequestMethod.POST,
     })
   }
 }
